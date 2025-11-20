@@ -74,7 +74,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ onCountrySelect, targetLocation }) =>
   }, [onCountrySelect]);
 
   return (
-    <div className="absolute inset-0 -z-10 bg-black">
+    <div className="absolute inset-0 bg-black">
       <Globe
         ref={globeEl}
         width={width}
