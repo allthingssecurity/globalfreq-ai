@@ -30,7 +30,7 @@
       }
     </style>
     <script>
-      // Robust shim for process.env to prevent crashes in environments where it's not immediately available
+      // Simple shim so any process.env access in the bundle is safe in the browser
       const processShim = { env: { API_KEY: '' } };
       try {
         window.process = processShim;
@@ -39,24 +39,10 @@
         console.warn('Process shim error', e);
       }
     </script>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "react-globe.gl": "https://aistudiocdn.com/react-globe.gl@^2.37.0",
-    "three": "https://aistudiocdn.com/three@^0.160.0"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <!-- Load the pre-built Vite bundle so GitHub Pages can serve this without a dev server -->
+    <script type="module" src="./dist/assets/index-BeoLltMC.js"></script>
+  </body>
 </html>
