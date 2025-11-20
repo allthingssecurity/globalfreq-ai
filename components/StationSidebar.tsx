@@ -25,28 +25,35 @@ const StationSidebar: React.FC<StationSidebarProps> = ({
 }) => {
   if (!countryName) {
     return (
-      <div className="absolute top-20 right-4 w-80 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center z-40 animate-fade-in">
+      <div className="absolute top-24 left-6 w-80 lg:w-96 bg-black/70 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-left z-40 shadow-2xl shadow-black/60">
         <Globe className="w-12 h-12 text-indigo-500 mx-auto mb-4 opacity-80" />
-        <h2 className="text-xl font-bold mb-2 text-white">Explore the World</h2>
-        <p className="text-gray-400 text-sm">
-          Spin the globe and click on a country to discover its radio stations and musical culture.
+        <h2 className="text-xl font-bold mb-2 text-white text-center tracking-tight">Welcome to GlobalFreq AI</h2>
+        <p className="text-gray-400 text-sm text-center">
+          Spin the globe and tap any country to instantly jump into its live radio soundscape.
         </p>
         <div className="mt-4 p-3 bg-indigo-900/20 rounded-lg border border-indigo-500/30">
-            <p className="text-indigo-300 text-xs font-mono">TIP: Check out India for a curated experience.</p>
+            <p className="text-indigo-300 text-xs font-mono text-center">
+              TIP: Try <span className="font-semibold text-white">Explore India</span> for a curated first experience.
+            </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="absolute top-20 right-4 w-80 lg:w-96 max-h-[calc(100vh-140px)] flex flex-col gap-4 z-40 pointer-events-none">
+    <div className="absolute top-24 left-6 w-[320px] lg:w-[380px] max-h-[calc(100vh-160px)] flex flex-col gap-4 z-40 pointer-events-none">
         {/* AI Insight Card */}
-        <div className="bg-black/70 backdrop-blur-xl border border-indigo-500/30 rounded-xl p-5 shadow-2xl shadow-indigo-900/20 pointer-events-auto transition-all duration-300">
-            <div className="flex items-center gap-2 mb-3">
+        <div className="bg-black/80 backdrop-blur-xl border border-indigo-500/40 rounded-2xl p-5 shadow-2xl shadow-black/70 pointer-events-auto transition-all duration-300">
+            <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-indigo-600 rounded-md">
                      <Music size={16} className="text-white" />
                 </div>
-                <h2 className="text-lg font-bold text-white uppercase tracking-wide">{countryName}</h2>
+                <h2 className="text-lg font-bold text-white tracking-tight">{countryName}</h2>
+                </div>
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-indigo-300 bg-indigo-950/60 px-2 py-1 rounded-full border border-indigo-500/40">
+                  <Info size={10} /> AI Insight
+                </span>
             </div>
 
             {isInsightLoading ? (
@@ -82,8 +89,8 @@ const StationSidebar: React.FC<StationSidebarProps> = ({
         </div>
 
         {/* Station List */}
-        <div className="bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden flex flex-col pointer-events-auto flex-1 min-h-0">
-            <div className="p-4 border-b border-white/10 bg-white/5">
+        <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden flex flex-col pointer-events-auto flex-1 min-h-0">
+            <div className="p-4 border-b border-white/10 bg-white/5/10">
                 <h3 className="font-bold text-white flex items-center gap-2">
                     <RadioIcon /> Live Stations <span className="text-xs font-normal text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded-full ml-auto">{stations.length}</span>
                 </h3>
