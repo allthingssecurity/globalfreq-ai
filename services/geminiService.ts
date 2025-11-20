@@ -1,13 +1,30 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AIInsightData } from "../types";
 
-// Ideally, check if key exists, but per instructions we assume process.env.API_KEY is valid/injected.
-// We create the instance lazily or on demand to handle key selection if needed, 
-// but standard instruction says initialize directly.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Resolve API key in a way that works both locally (with env) and on
+// GitHub Pages (no env) without crashing in the browser.
+const apiKey =
+  (typeof process !== "undefined" &&
+    (process.env?.GEMINI_API_KEY || process.env?.API_KEY)) ||
+  "";
+
+// Only create the client when a key is actually available.
+const ai: GoogleGenAI | null = apiKey
+  ? new GoogleGenAI({ apiKey })
+  : null;
 
 export const getCountryMusicInsight = async (countryName: string): Promise<AIInsightData | null> => {
   try {
+    if (!ai) {
+      // No key available (e.g. GitHub Pages) – return a friendly fallback.
+      return {
+        country: countryName,
+        summary: `Discover live radio from ${countryName} and explore its soundscape in real time.`,
+        musicCulture: "AI insights are disabled on this deployment, but the music still tells the story.",
+        popularGenres: ["Pop", "Traditional", "News"]
+      };
+    }
+
     const modelId = 'gemini-2.5-flash'; 
     const prompt = `
       Generate a brief and engaging music culture summary for ${countryName}.
@@ -57,6 +74,10 @@ export const getCountryMusicInsight = async (countryName: string): Promise<AIIns
 
 export const getDJIntro = async (stationName: string, country: string, genre: string): Promise<string> => {
   try {
+      if (!ai) {
+        return `Now playing ${stationName} from ${country} – enjoy the vibes.`;
+      }
+
       const response = await ai.models.generateContent({
           model: 'gemini-2.5-flash',
           contents: `You are a cool, energetic radio DJ. Write a ONE SENTENCE intro for the station "${stationName}" from ${country}. Mention the genre "${genre}" if known. Keep it under 20 words.`,
