@@ -2,15 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Globe3D from './components/Globe3D';
 import StationSidebar from './components/StationSidebar';
 import RadioPlayer from './components/RadioPlayer';
-import { getStationsByCountry } from './services/radioService';
+import { getStationsByCountry, getStationsByIndianState } from './services/radioService';
 import { getCountryMusicInsight, getDJIntro } from './services/geminiService';
 import { RadioStation, GeoFeature, AIInsightData } from './types';
-import { MapPin, Loader2, Sparkles } from 'lucide-react';
+import { MapPin, Sparkles } from 'lucide-react';
+import { INDIAN_STATE_OPTIONS } from './data/indianStations';
 
 const INDIA_COORDS = { lat: 20.5937, lng: 78.9629 };
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedIndiaState, setSelectedIndiaState] = useState<string>('all');
   const [targetLocation, setTargetLocation] = useState<{ lat: number, lng: number } | null>(null);
   
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -29,11 +31,14 @@ const App: React.FC = () => {
     const countryName = geo.properties.ADMIN;
 
     setSelectedCountry(countryName);
+    setSelectedIndiaState('all');
     setTargetLocation({ lat, lng }); // Updates Globe camera
     
     setIsLoadingStations(true);
     setIsInsightLoading(true);
     setStations([]);
+    setCurrentStation(null);
+    setIsPlaying(false);
     setAiInsight(null);
     setDjIntro(null);
 
@@ -58,6 +63,28 @@ const App: React.FC = () => {
     }
 
   }, []);
+
+  const handleIndiaStateChange = async (stateValue: string) => {
+    if (selectedCountry !== 'India') return;
+    if (stateValue === selectedIndiaState) return;
+    setSelectedIndiaState(stateValue);
+    setIsLoadingStations(true);
+    setStations([]);
+    setCurrentStation(null);
+    setDjIntro(null);
+    setIsPlaying(false);
+
+    try {
+      const fetched = stateValue === 'all'
+        ? await getStationsByCountry('IN')
+        : await getStationsByIndianState(stateValue);
+      setStations(fetched);
+    } catch (e) {
+      console.error("Failed to load Indian state stations", e);
+    } finally {
+      setIsLoadingStations(false);
+    }
+  };
 
   const handleStationSelect = async (station: RadioStation) => {
     setCurrentStation(station);
@@ -130,6 +157,9 @@ const App: React.FC = () => {
         aiInsight={aiInsight}
         isInsightLoading={isInsightLoading}
         djIntro={djIntro}
+        indiaStateOptions={INDIAN_STATE_OPTIONS}
+        selectedIndiaState={selectedIndiaState}
+        onIndiaStateChange={handleIndiaStateChange}
       />
 
       {/* Player */}

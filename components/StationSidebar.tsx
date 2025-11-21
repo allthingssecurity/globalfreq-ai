@@ -11,6 +11,9 @@ interface StationSidebarProps {
   aiInsight: AIInsightData | null;
   isInsightLoading: boolean;
   djIntro: string | null;
+  indiaStateOptions: { value: string; label: string }[];
+  selectedIndiaState: string;
+  onIndiaStateChange: (state: string) => void;
 }
 
 const StationSidebar: React.FC<StationSidebarProps> = ({
@@ -21,7 +24,10 @@ const StationSidebar: React.FC<StationSidebarProps> = ({
   onStationSelect,
   aiInsight,
   isInsightLoading,
-  djIntro
+  djIntro,
+  indiaStateOptions,
+  selectedIndiaState,
+  onIndiaStateChange
 }) => {
   if (!countryName) {
     return (
@@ -42,6 +48,47 @@ const StationSidebar: React.FC<StationSidebarProps> = ({
 
   return (
     <div className="absolute top-24 left-6 w-[320px] lg:w-[380px] max-h-[calc(100vh-160px)] flex flex-col gap-4 z-40 pointer-events-none">
+        {countryName === 'India' && (
+            <div className="bg-gradient-to-r from-orange-500/15 via-amber-500/10 to-emerald-500/15 border border-white/10 rounded-2xl p-4 shadow-2xl shadow-amber-900/30 pointer-events-auto">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                    <div>
+                        <p className="text-[11px] uppercase tracking-wide text-amber-200">Local India tuner</p>
+                        <p className="text-white font-semibold text-sm">Drop down to pick a state</p>
+                    </div>
+                    <span className="text-[11px] text-emerald-100 bg-black/30 px-2 py-1 rounded-full border border-white/10">Beta</span>
+                </div>
+                <select
+                    value={selectedIndiaState}
+                    onChange={(e) => onIndiaStateChange(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/60"
+                >
+                    {indiaStateOptions.map((option) => (
+                        <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {indiaStateOptions.filter(opt => opt.value !== 'all').slice(0, 4).map((opt) => (
+                        <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => onIndiaStateChange(opt.value)}
+                            className={`text-[11px] px-3 py-1 rounded-full border transition-colors ${
+                                selectedIndiaState === opt.value
+                                    ? 'bg-orange-500 text-black border-orange-400'
+                                    : 'bg-black/30 text-amber-100 border-white/10 hover:border-orange-300'
+                            }`}
+                        >
+                            {opt.label.split(' • ')[0]}
+                        </button>
+                    ))}
+                </div>
+                <p className="text-[11px] text-amber-100 mt-2">
+                    Try Karnataka for Bengaluru classics like Radio Mirchi &amp; Rainbow, or switch states for local city mixes.
+                </p>
+            </div>
+        )}
         {/* AI Insight Card */}
         <div className="bg-black/80 backdrop-blur-xl border border-indigo-500/40 rounded-2xl p-5 shadow-2xl shadow-black/70 pointer-events-auto transition-all duration-300">
             <div className="flex items-center justify-between gap-2 mb-3">
